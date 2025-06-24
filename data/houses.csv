@@ -1,0 +1,4 @@
+id,quantitySingleBeds,quantityDoubleBeds,seaDistance,isAvailable,pricePerNight,quantityParkingSpaces,hasShower,hasKitchen,hasTerrace,hasAC
+1,1,1,100,true,5000,1,false,false,true,false
+2,2,1,50,true,10000,2,false,true,true,false
+3,0,2,200,false,5000,1,true,true,false,true
