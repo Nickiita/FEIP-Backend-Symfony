@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<psalm
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://getpsalm.org/schema/config.xsd"
+        errorLevel="4"
+        resolveFromConfigFile="true"
+>
+    <projectFiles>
+        <directory name="src" />
+        <directory name="tests" />
+
+        <excludeFile name="config/preload.php" />
+        <excludeFile name="public/index.php" />
+
+        <excludeDirectory name="bin" />
+        <excludeDirectory name="var" />
+        <excludeDirectory name="vendor" />
+    </projectFiles>
+
+    <cacheDirectory>var/cache/.psalm-cache</cacheDirectory>
+
+    <issueHandlers>
+
+    </issueHandlers>
+
+    <configSettings>
+        <bool name="ignoreInternalFunctionFalseReturn" value="false" />
+        <bool name="ignoreInternalFunctionNullReturn" value="false" />
+        <bool name="ensureArrayIntOffsetsExist" value="true" />
+        <bool name="ensureArrayStringOffsetsExist" value="true" />
+        <bool name="strictBinaryOperands" value="true" />
+    </configSettings>
+</psalm>

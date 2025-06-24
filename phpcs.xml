@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<ruleset name="ProjectRules">
+    <rule ref="PSR12"/>
+    <rule ref="Generic.ControlStructures.NestingLevel">
+        <properties>
+            <property name="max" value="3"/>
+        </properties>
+    </rule>
+</ruleset>
