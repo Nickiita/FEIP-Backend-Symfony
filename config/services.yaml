@@ -30,14 +30,13 @@ services:
 
     App\Controller\HouseController:
         arguments:
-            $csvService: '@App\Service\CsvService'
-            $filename: '%houses_filename%'
+            $houseRepository: '@App\Repository\HouseRepository'
 
     App\Controller\BookingController:
         arguments:
-            $csvService: '@App\Service\CsvService'
-            $filename: '%bookings_filename%'
-            $housesFilename: '%houses_filename%'
+            $houseRepository: '@App\Repository\HouseRepository'
+            $bookingRepository: '@App\Repository\BookingRepository'
+            $entityManager: '@doctrine.orm.entity_manager'
 
 
     # add more service definitions when explicit configuration is needed

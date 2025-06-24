@@ -2,20 +2,24 @@
 
 namespace App\Controller;
 
+use App\Entity\Booking;
+use App\Entity\House;
+use App\Repository\BookingRepository;
+use App\Repository\HouseRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
-use App\Service\CsvService;
+use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/api/bookings')]
 class BookingController extends AbstractController
 {
     public function __construct(
-        private readonly CsvService $csvService,
-        private readonly string $filename,
-        private readonly string $housesFilename
+        private readonly EntityManagerInterface $entityManager,
+        private readonly HouseRepository $houseRepository,
+        private readonly BookingRepository $bookingRepository
     ) {}
 
     private function extractBookingData(Request $request): array
@@ -33,17 +37,6 @@ class BookingController extends AbstractController
         return strlen($phone) <= 16 && preg_match('/^[0-9+\- ]+$/', $phone);
     }
 
-    private function houseExists(int $houseId): bool
-    {
-        $houses = $this->csvService->readAll($this->housesFilename);
-        foreach ($houses as $house) {
-            if ((int)$house[0] === $houseId) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     #[Route('', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
@@ -53,23 +46,20 @@ class BookingController extends AbstractController
             return $this->json(['error' => 'Invalid input'], HttpResponse::HTTP_BAD_REQUEST);
         }
 
-        if (!$this->houseExists((int)$houseId)) {
+        $house = $this->houseRepository->find($houseId);
+        if (!$house) {
             return $this->json(['error' => 'House not found'], HttpResponse::HTTP_NOT_FOUND);
         }
 
-        $rows = $this->csvService->readAll($this->filename);
-        $nextId = count($rows);
+        $booking = new Booking();
+        $booking->setHouseId($house)
+            ->setPhone($phone)
+            ->setComment($comment);
 
-        $row = [
-            $nextId,
-            (int)$houseId,
-            $phone,
-            $comment
-        ];
+        $this->entityManager->persist($booking);
+        $this->entityManager->flush();
 
-        $this->csvService->append($this->filename, $row);
-
-        return $this->json(['status' => 'ok', 'id' => $nextId], HttpResponse::HTTP_CREATED);
+        return $this->json(['status' => 'ok', 'id' => $booking->getId()], HttpResponse::HTTP_CREATED);
     }
 
     #[Route('/{id}', methods: ['PUT'])]
@@ -81,22 +71,22 @@ class BookingController extends AbstractController
             return $this->json(['error' => 'Invalid input'], HttpResponse::HTTP_BAD_REQUEST);
         }
 
-        if (!$this->houseExists((int)$houseId)) {
+        $house = $this->houseRepository->find($houseId);
+        if (!$house) {
             return $this->json(['error' => 'House not found'], HttpResponse::HTTP_NOT_FOUND);
         }
 
-        $row = [
-            $id,
-            (int)$houseId,
-            $phone,
-            $comment
-        ];
-
-        try {
-            $this->csvService->overwriteRow($this->filename, $id, $row);
-            return $this->json(['status' => 'updated']);
-        } catch (\RuntimeException $e) {
-            return $this->json(['error' => $e->getMessage()], HttpResponse::HTTP_NOT_FOUND);
+        $booking = $this->bookingRepository->find($id);
+        if (!$booking) {
+            return $this->json(['error' => 'Booking not found'], HttpResponse::HTTP_NOT_FOUND);
         }
+
+        $booking->setHouseId($house)
+            ->setPhone($phone)
+            ->setComment($comment);
+
+        $this->entityManager->flush();
+
+        return $this->json(['status' => 'updated']);
     }
 }
