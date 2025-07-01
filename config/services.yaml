@@ -30,6 +30,7 @@ services:
 
     App\Controller\HouseController:
         arguments:
+
             $csvService: '@App\Service\CsvService'
             $filename: '%houses_filename%'
 
@@ -38,6 +39,7 @@ services:
             $csvService: '@App\Service\CsvService'
             $filename: '%bookings_filename%'
             $housesFilename: '%houses_filename%'
+
 
 
     # add more service definitions when explicit configuration is needed
