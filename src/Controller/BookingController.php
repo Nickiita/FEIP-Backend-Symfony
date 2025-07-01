@@ -22,21 +22,6 @@ class BookingController extends AbstractController
         private readonly BookingRepository $bookingRepository
     ) {}
 
-    private function extractBookingData(Request $request): array
-    {
-        $data = json_decode($request->getContent(), true);
-        return [
-            $data['houseId'] ?? null,
-            $data['phone'] ?? '',
-            $data['comment'] ?? '',
-        ];
-    }
-
-    private function isValidPhone(string $phone): bool
-    {
-        return strlen($phone) <= 16 && preg_match('/^[0-9+\- ]+$/', $phone);
-    }
-
     #[Route('', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
@@ -89,4 +74,32 @@ class BookingController extends AbstractController
 
         return $this->json(['status' => 'updated']);
     }
+
+
+    private function extractBookingData(Request $request): array
+    {
+        $data = json_decode($request->getContent(), true);
+        return [
+            $data['houseId'] ?? null,
+            $data['phone'] ?? '',
+            $data['comment'] ?? '',
+        ];
+    }
+
+    private function isValidPhone(string $phone): bool
+    {
+        return strlen($phone) <= 16 && preg_match('/^[0-9+\- ]+$/', $phone);
+    }
+
+    private function houseExists(int $houseId): bool
+    {
+        $houses = $this->csvService->readAll($this->housesFilename);
+        foreach ($houses as $house) {
+            if ((int)$house[0] === $houseId) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
+
