@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Service;
 
 use App\Service\CsvService;
@@ -64,7 +66,7 @@ class CsvServiceTest extends TestCase
 
         $lines = file("{$this->dir}/{$this->file}", FILE_IGNORE_NEW_LINES);
         $this->assertCount(1, $lines);
-        $this->assertSame("x,y,z", $lines[0]);
+        $this->assertSame('x,y,z', $lines[0]);
     }
 
     public function testOverwriteRowUpdatesExistingRow(): void
@@ -75,7 +77,7 @@ class CsvServiceTest extends TestCase
         $service = new CsvService($this->dir, ',');
         $service->overwriteRow($this->file, 1, ['1','UPDATED','ROW']);
 
-        $rows = array_map(fn($l) => str_getcsv($l, ','), file("{$this->dir}/{$this->file}", FILE_IGNORE_NEW_LINES));
+        $rows = array_map(fn ($l) => str_getcsv($l, ','), file("{$this->dir}/{$this->file}", FILE_IGNORE_NEW_LINES));
         $this->assertEquals(['0','foo','bar'], $rows[0]);
         $this->assertEquals(['1','UPDATED','ROW'], $rows[1]);
     }

@@ -4,6 +4,7 @@
         xsi:noNamespaceSchemaLocation="https://getpsalm.org/schema/config.xsd"
         errorLevel="4"
         resolveFromConfigFile="true"
+        cacheDirectory="var/cache/.psalm-cache"
 >
     <projectFiles>
         <directory name="src" />
@@ -17,17 +18,19 @@
         <excludeDirectory name="vendor" />
     </projectFiles>
 
-    <cacheDirectory>var/cache/.psalm-cache</cacheDirectory>
-
     <issueHandlers>
+        <InternalMethod>
+            <ignoreInternalFunctionFalseReturn value="false" />
+            <ignoreInternalFunctionNullReturn value="false" />
+        </InternalMethod>
 
+        <ArrayOffset>
+            <ensureArrayIntOffsetsExist value="true" />
+            <ensureArrayStringOffsetsExist value="true" />
+        </ArrayOffset>
+
+        <InvalidOperand>
+            <strictBinaryOperands value="true" />
+        </InvalidOperand>
     </issueHandlers>
-
-    <configSettings>
-        <bool name="ignoreInternalFunctionFalseReturn" value="false" />
-        <bool name="ignoreInternalFunctionNullReturn" value="false" />
-        <bool name="ensureArrayIntOffsetsExist" value="true" />
-        <bool name="ensureArrayStringOffsetsExist" value="true" />
-        <bool name="strictBinaryOperands" value="true" />
-    </configSettings>
 </psalm>
