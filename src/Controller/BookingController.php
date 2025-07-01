@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+
 use App\Entity\Booking;
 use App\Entity\House;
 use App\Repository\BookingRepository;
@@ -13,13 +14,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+
 #[Route('/api/bookings')]
 class BookingController extends AbstractController
 {
     public function __construct(
+
         private readonly EntityManagerInterface $entityManager,
         private readonly HouseRepository $houseRepository,
         private readonly BookingRepository $bookingRepository
+
     ) {}
 
     #[Route('', methods: ['POST'])]
@@ -30,6 +34,7 @@ class BookingController extends AbstractController
         if (!is_numeric($houseId) || !$this->isValidPhone($phone)) {
             return $this->json(['error' => 'Invalid input'], HttpResponse::HTTP_BAD_REQUEST);
         }
+
 
         $house = $this->houseRepository->find($houseId);
         if (!$house) {
@@ -45,6 +50,7 @@ class BookingController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json(['status' => 'ok', 'id' => $booking->getId()], HttpResponse::HTTP_CREATED);
+
     }
 
     #[Route('/{id}', methods: ['PUT'])]
@@ -55,6 +61,7 @@ class BookingController extends AbstractController
         if (!is_numeric($houseId) || !$this->isValidPhone($phone)) {
             return $this->json(['error' => 'Invalid input'], HttpResponse::HTTP_BAD_REQUEST);
         }
+
 
         $house = $this->houseRepository->find($houseId);
         if (!$house) {
@@ -74,6 +81,7 @@ class BookingController extends AbstractController
 
         return $this->json(['status' => 'updated']);
     }
+
 
 
     private function extractBookingData(Request $request): array
@@ -101,5 +109,7 @@ class BookingController extends AbstractController
         }
         return false;
     }
+
 }
+
 

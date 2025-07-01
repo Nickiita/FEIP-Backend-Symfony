@@ -18,8 +18,10 @@
         "symfony/yaml": "6.4.*"
     },
     "require-dev": {
+
         "phpunit/phpunit": "*",
         "symfony/browser-kit": "6.4.*",
+
         "symfony/maker-bundle": "^1.62"
     },
     "config": {
