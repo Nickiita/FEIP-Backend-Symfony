@@ -2,36 +2,32 @@
 
 namespace App\Controller;
 
+
 use App\Repository\HouseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-#[Route('/api/houses', methods: ['GET'])]
 class HouseController extends AbstractController
 {
     public function __construct(private readonly HouseRepository $houseRepository) {}
 
-    public function __invoke(): JsonResponse
+
+    #[Route('/api/houses', name: 'house_list', methods: ['GET'])]
+    public function list(): JsonResponse
     {
-        $houses = $this->houseRepository->findAll();
-
-        $data = array_map(function ($house) {
-            return [
-                'id' => $house->getId(),
-                'quantitySingleBeds' => $house->getQuantitySingleBeds(),
-                'quantityDoubleBeds' => $house->getQuantityDoubleBeds(),
-                'seaDistance' => $house->getSeaDistance(),
-                'isAvailable' => $house->isAvailable(),
-                'pricePerNight' => $house->getPricePerNight(),
-                'quantityParkingSpaces' => $house->getQuantityParkingSpaces(),
-                'hasShower' => $house->hasShower(),
-                'hasKitchen' => $house->hasKitchen(),
-                'hasTerrace' => $house->hasTerrace(),
-                'hasAC' => $house->hasAC(),
-            ];
-        }, $houses);
-
+        $data = $this->getHouseData();
         return $this->json($data);
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function getHouseData(): array
+    {
+
+        $lines = $this->csvService->readAll($this->filename);
+        $headers = array_shift($lines) ?? [];
+        return array_map(fn(array $row) => array_combine($headers, $row), $lines);
     }
 }
