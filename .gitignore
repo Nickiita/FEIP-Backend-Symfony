@@ -56,3 +56,8 @@
 /phpunit.xml
 /.phpunit.cache/
 ###< phpunit/phpunit ###
+
+###> friendsofphp/php-cs-fixer ###
+var/.php-cs-fixer.php
+var/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###

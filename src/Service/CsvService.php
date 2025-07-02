@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use RuntimeException;
@@ -31,7 +33,7 @@ class CsvService
             return [];
         }
         $lines = file($full, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        return array_map(fn(string $line) => str_getcsv($line, $this->delimiter), $lines);
+        return array_map(fn (string $line) => str_getcsv($line, $this->delimiter), $lines);
     }
 
     public function append(string $filename, array $row): void
